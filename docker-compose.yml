@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  backend:
+    build: .
+    image: pt-backend
+    container_name: pt-backend
+    ports:
+      - ${BACKEND_PORT_EXTERNAL}:${BACKEND_PORT_INTERNAL}
+    links:
+      - database
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  database:
+    image: mysql:8.2
+    container_name: pt-database
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
